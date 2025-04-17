@@ -45,6 +45,8 @@
  *     responses:
  *       201:
  *         description: Quiz criado com sucesso
+ *       400:
+ *         description: Campos obrigatórios ausentes ou inválidos
  *       500:
  *         description: Erro ao criar quiz
  */
@@ -63,7 +65,9 @@
  *           type: string
  *     responses:
  *       200:
- *         description: Lista de quizzes
+ *         description: Lista de quizzes disponíveis
+ *       500:
+ *         description: Erro ao buscar quizzes disponíveis
  */
 
 /**
@@ -81,6 +85,8 @@
  *     responses:
  *       200:
  *         description: Lista de quizzes com estatísticas
+ *       500:
+ *         description: Erro ao buscar quizzes do professor
  */
 
 /**
@@ -95,6 +101,7 @@
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [quizId, alunoId, respostas]
  *             properties:
  *               quizId:
  *                 type: string
@@ -112,6 +119,12 @@
  *     responses:
  *       201:
  *         description: Resposta registrada e XP atualizado
+ *       400:
+ *         description: Campos obrigatórios ausentes ou quiz sem perguntas
+ *       404:
+ *         description: Quiz não encontrado
+ *       500:
+ *         description: Erro ao responder o quiz
  */
 
 /**
@@ -134,6 +147,10 @@
  *     responses:
  *       200:
  *         description: Resumo com acertos, XP e data
+ *       404:
+ *         description: Resposta ou quiz não encontrado
+ *       500:
+ *         description: Erro ao buscar resumo da resposta
  */
 
 /**
@@ -151,6 +168,8 @@
  *     responses:
  *       200:
  *         description: Lista de quizzes respondidos
+ *       500:
+ *         description: Erro ao listar quizzes respondidos
  */
 
 /**
@@ -168,6 +187,10 @@
  *     responses:
  *       200:
  *         description: Estatísticas de alunos que responderam
+ *       404:
+ *         description: Nenhum quiz encontrado
+ *       500:
+ *         description: Erro ao buscar estatísticas do último quiz
  */
 
 /**
@@ -185,6 +208,10 @@
  *     responses:
  *       200:
  *         description: Dados completos do quiz
+ *       404:
+ *         description: Quiz não encontrado
+ *       500:
+ *         description: Erro ao detalhar quiz completo
  */
 
 /**
@@ -202,4 +229,8 @@
  *     responses:
  *       200:
  *         description: Dados do quiz
+ *       404:
+ *         description: Quiz não encontrado
+ *       500:
+ *         description: Erro ao detalhar quiz
  */

@@ -8,6 +8,10 @@ exports.criarQuiz = async (req, res) => {
   try {
     const { nome, materia, professorId, perguntas, dataFinal } = req.body;
 
+    if (!nome || !materia || !professorId || !perguntas || !dataFinal) {
+      return res.status(400).json({ error: "Campos obrigatórios ausentes ou inválidos" });
+    }
+
     const novoQuiz = new Quiz({
       nome,
       materia,
@@ -20,9 +24,11 @@ exports.criarQuiz = async (req, res) => {
     res.status(201).json({ message: 'Quiz criado com sucesso', quizId: novoQuiz._id });
 
   } catch (error) {
+    console.error('Erro ao criar quiz:', error);
     res.status(500).json({ error: 'Erro ao criar quiz' });
   }
 };
+
 
 // Listar quizzes disponíveis para um aluno
 exports.listarQuizzesDisponiveis = async (req, res) => {
@@ -162,8 +168,16 @@ exports.responderQuiz = async (req, res) => {
   try {
     const { quizId, alunoId, respostas } = req.body;
 
+    if (!quizId || !alunoId || !respostas || !Array.isArray(respostas)) {
+      return res.status(400).json({ error: "Campos obrigatórios ausentes ou inválidos" });
+    }
+
     const quiz = await Quiz.findById(quizId);
     if (!quiz) return res.status(404).json({ error: 'Quiz não encontrado' });
+
+    if (!quiz.perguntas || quiz.perguntas.length === 0) {
+      return res.status(400).json({ error: "Quiz sem perguntas válidas" });
+    }
 
     let xpGanho = 0;
 
@@ -204,10 +218,11 @@ exports.responderQuiz = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Erro ao registrar resposta do quiz:', error);
+    console.error('Erro ao responder o quiz:', error);
     res.status(500).json({ error: 'Erro ao responder o quiz' });
   }
 };
+
 
 // GET /:quizId/resumo/:alunoId — funcionalidade 4
 exports.resumoResposta = async (req, res) => {
@@ -218,6 +233,7 @@ exports.resumoResposta = async (req, res) => {
     if (!resposta) return res.status(404).json({ error: 'Resposta não encontrada' });
 
     const quiz = await Quiz.findById(quizId);
+    if (!quiz) return res.status(404).json({ error: 'Quiz não encontrado' });
 
     res.json({
       quizId,
