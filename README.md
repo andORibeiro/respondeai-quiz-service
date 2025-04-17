@@ -1,4 +1,5 @@
 # 📝 RespondeAI Quiz Service
+[![Documentação Swagger](https://img.shields.io/badge/Swagger-Documentação-green?logo=swagger)](http://localhost:3003/api-docs)
 
 🚀 **RespondeAI Quiz Service** é o microserviço responsável por gerenciar quizzes da plataforma RespondeAI. Ele permite que professores criem quizzes, alunos visualizem e respondam, além de avaliar automaticamente o desempenho e atualizar o XP dos usuários.
 
