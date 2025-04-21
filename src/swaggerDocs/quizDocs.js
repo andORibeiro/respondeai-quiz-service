@@ -1,54 +1,10 @@
 /**
  * @swagger
  * tags:
- *   name: Quizzes
- *   description: Endpoints para gerenciamento de quizzes
- */
-
-/**
- * @swagger
- * /api/quizzes:
- *   post:
- *     summary: Criar um novo quiz
- *     tags: [Quizzes]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [nome, materia, professorId, perguntas, dataFinal]
- *             properties:
- *               nome:
- *                 type: string
- *               materia:
- *                 type: string
- *               professorId:
- *                 type: string
- *               dataFinal:
- *                 type: string
- *               perguntas:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     perguntaId:
- *                       type: string
- *                     enunciado:
- *                       type: string
- *                     opcoes:
- *                       type: array
- *                       items:
- *                         type: string
- *                     respostaCorreta:
- *                       type: string
- *     responses:
- *       201:
- *         description: Quiz criado com sucesso
- *       400:
- *         description: Campos obrigatórios ausentes ou inválidos
- *       500:
- *         description: Erro ao criar quiz
+ *   - name: Quizzes
+ *     description: Endpoints para gerenciamento de quizzes respondidos
+ *   - name: Rascunhos
+ *     description: Endpoints para criação, avaliação e finalização de quizzes via IA
  */
 
 /**
@@ -237,20 +193,6 @@
 
 /**
  * @swagger
- * tags:
- *   - name: Quizzes
- *     description: Gerenciamento de quizzes com geração por IA
- */
-
-/**
- * @swagger
- * tags:
- *   - name: Rascunhos
- *     description: Gerenciamento de quizzes em rascunho (pré-aprovação de perguntas)
- */
-
-/**
- * @swagger
  * /api/rascunhos/draft:
  *   post:
  *     summary: Cria um novo rascunho de quiz com questões geradas por IA (Gemini)
@@ -261,13 +203,15 @@
  *         application/json:
  *           schema:
  *             type: object
- *             required: [professorId, turma, materia, quantidade]
+ *             required: [professorId, turma, materia, tema, quantidade]
  *             properties:
  *               professorId:
  *                 type: string
  *               turma:
  *                 type: string
  *               materia:
+ *                 type: string
+ *               tema:
  *                 type: string
  *               quantidade:
  *                 type: integer

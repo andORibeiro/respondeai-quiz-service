@@ -2,35 +2,6 @@ const Quiz = require('../models/Quiz');
 const QuizResposta = require('../models/QuizResposta');
 const mongoose = require('mongoose');
 const axios = require('axios');
-const geminiService = require('../services/geminiService.js');
-
-// Criar quiz
-exports.criarQuiz = async (req, res) => {
-  try {
-    const { nome, materia, anoLetivo, professorId, perguntas, dataFinal } = req.body;
-
-    if (!nome || !materia || !anoLetivo || !professorId || !perguntas || !dataFinal) {
-      return res.status(400).json({ error: "Campos obrigatórios ausentes ou inválidos" });
-    }
-
-    const novoQuiz = new Quiz({
-      nome,
-      materia,
-      anoLetivo,
-      professorId,
-      perguntas,
-      dataFinal
-    });
-
-    await novoQuiz.save();
-    res.status(201).json({ message: 'Quiz criado com sucesso', quizId: novoQuiz._id });
-
-  } catch (error) {
-    console.error('Erro ao criar quiz:', error);
-    res.status(500).json({ error: 'Erro ao criar quiz' });
-  }
-};
-
 
 // Listar quizzes disponíveis para um aluno
 exports.listarQuizzesDisponiveis = async (req, res) => {
@@ -56,6 +27,7 @@ exports.listarQuizzesDisponiveis = async (req, res) => {
         _id: quiz._id,
         nome: quiz.nome,
         materia: quiz.materia,
+        tema: quiz.tema,
         anoLetivo: quiz.anoLetivo,
         quantidadePerguntas: quiz.perguntas.length,
         diasRestantes: diasRestantes >= 0 ? diasRestantes : 0,
@@ -86,6 +58,7 @@ exports.listarQuizzesPorProfessor = async (req, res) => {
           _id: quiz._id,
           nome: quiz.nome,
           materia: quiz.materia,
+          tema: quiz.tema,
           anoLetivo: quiz.anoLetivo,
           dataFinal: quiz.dataFinal,
           criadoEm: quiz.criadoEm,
@@ -116,6 +89,7 @@ exports.quizAlunoView = async (req, res) => {
       id: quiz._id,
       nome: quiz.nome,
       materia: quiz.materia,
+      tema: quiz.tema,
       anoLetivo: quiz.anoLetivo,
       professorId: quiz.professorId,
       criadoEm: quiz.criadoEm,
@@ -148,6 +122,7 @@ exports.quizProfessorView = async (req, res) => {
       id: quiz._id,
       nome: quiz.nome,
       materia: quiz.materia,
+      tema: quiz.tema,
       anoLetivo: quiz.anoLetivo,
       professorId: quiz.professorId,
       criadoEm: quiz.criadoEm,
@@ -246,6 +221,7 @@ exports.resumoResposta = async (req, res) => {
       alunoId,
       nome: quiz.nome,
       materia: quiz.materia,
+      tema: quiz.tema,
       anoLetivo: quiz.anoLetivo,
       respondidoEm: resposta.respondidoEm,
       quantidadeTotal: resposta.respostas.length,

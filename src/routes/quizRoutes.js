@@ -4,9 +4,6 @@ const mongoose = require('mongoose');
 
 const quizController = require('../controllers/quizController');
 
-// ✅ Criar novo quiz
-router.post('/', quizController.criarQuiz);
-
 // ✅ Listar quizzes disponíveis para o aluno (com lógica de filtro correta)
 router.get('/disponiveis/:alunoId', quizController.listarQuizzesDisponiveis);
 

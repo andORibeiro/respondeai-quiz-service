@@ -2,11 +2,11 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-exports.generateQuestions = async (assunto, anoLetivo, quantidade) => {
+exports.generateQuestions = async (tema, materia, anoLetivo, quantidade) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `Gere ${quantidade} questões de múltipla escolha sobre o assunto "${assunto}" para o ano letivo "${anoLetivo}". 
+    const prompt = `Gere ${quantidade} questões de múltipla escolha sobre a materia "${materia}" para o ano letivo "${anoLetivo}". 
 Cada questão deve incluir 4 opções e a resposta correta. Retorne o resultado no seguinte formato JSON puro (sem comentários ou texto adicional):
 
 [

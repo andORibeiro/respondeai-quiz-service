@@ -7,18 +7,19 @@ const gerarIdUnico = () => 'ex' + Math.random().toString(36).substr(2, 9);
 
 exports.criarRascunho = async (req, res) => {
   try {
-    const { professorId, turma, materia, quantidade } = req.body;
+    const { professorId, turma, materia, tema, quantidade } = req.body;
 
-    if (!professorId || !turma || !materia || !quantidade) {
+    if (!tema || !professorId || !turma || !materia || !quantidade) {
       return res.status(400).json({ error: "Campos obrigatórios não preenchidos." });
     }
 
-    const questoesGeradas = await generateQuestions(materia, turma, quantidade);
+    const questoesGeradas = await generateQuestions(tema, materia, turma, quantidade);
 
     const draft = new QuizDraft({
       professorId,
       turma,
       materia,
+      tema,
       quantidade,
       questoes: questoesGeradas.map((q) => ({
         perguntaId: gerarIdUnico(),
@@ -68,6 +69,7 @@ exports.finalizarRascunho = async (req, res) => {
     const novoQuiz = new Quiz({
       nome: `Quiz de ${draft.materia} - ${draft.turma}`,
       materia: draft.materia,
+      tema: draft.tema,
       professorId: draft.professorId,
       anoLetivo: draft.anoLetivo,
       perguntas: perguntasFormatadas,
@@ -160,7 +162,7 @@ exports.regerarPerguntasRejeitadas = async (req, res) => {
       return res.status(400).json({ message: 'Não há perguntas rejeitadas para substituir.' });
     }
 
-    const novasQuestoes = await generateQuestions(draft.materia, draft.turma, rejeitadas.length);
+    const novasQuestoes = await generateQuestions(draft.tema, draft.materia, draft.turma, rejeitadas.length);
 
     rejeitadas.forEach((rejeitada, i) => {
       draft.questoes[rejeitada.index] = {

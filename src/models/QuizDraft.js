@@ -4,6 +4,7 @@ const quizDraftSchema = new mongoose.Schema({
   professorId: { type: String, required: true },
   turma: { type: String, required: true },
   materia: { type: String, required: true },
+  tema: { type: String, required: true },
   quantidade: { type: Number, required: true },
   status: {
     type: String,
