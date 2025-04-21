@@ -31,11 +31,4 @@ router.get('/:quizId', quizController.quizAlunoView);
 // ✅ Registrar resposta do aluno com correção e cálculo de XP
 router.post('/responder', quizController.responderQuiz);
 
-// ✅ Listar perguntas pendentes de aprovação de um quiz draft
-router.get('/:quizId/perguntas/pendentes', quizController.listarPerguntasPendentes);
-
-// ✅ Aprovar ou rejeitar pergunta individualmente
-router.patch('/:quizId/perguntas/avaliar', quizController.avaliarPergunta);
-
-
 module.exports = router;

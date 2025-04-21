@@ -12,6 +12,7 @@ const quizDraftSchema = new mongoose.Schema({
   },
   questoes: [
     {
+      perguntaId: String,
       enunciado: String,
       opcoes: [String],
       respostaCorreta: String,

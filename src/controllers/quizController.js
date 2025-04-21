@@ -2,19 +2,21 @@ const Quiz = require('../models/Quiz');
 const QuizResposta = require('../models/QuizResposta');
 const mongoose = require('mongoose');
 const axios = require('axios');
+const geminiService = require('../services/geminiService.js');
 
 // Criar quiz
 exports.criarQuiz = async (req, res) => {
   try {
-    const { nome, materia, professorId, perguntas, dataFinal } = req.body;
+    const { nome, materia, anoLetivo, professorId, perguntas, dataFinal } = req.body;
 
-    if (!nome || !materia || !professorId || !perguntas || !dataFinal) {
+    if (!nome || !materia || !anoLetivo || !professorId || !perguntas || !dataFinal) {
       return res.status(400).json({ error: "Campos obrigatórios ausentes ou inválidos" });
     }
 
     const novoQuiz = new Quiz({
       nome,
       materia,
+      anoLetivo,
       professorId,
       perguntas,
       dataFinal
@@ -54,6 +56,7 @@ exports.listarQuizzesDisponiveis = async (req, res) => {
         _id: quiz._id,
         nome: quiz.nome,
         materia: quiz.materia,
+        anoLetivo: quiz.anoLetivo,
         quantidadePerguntas: quiz.perguntas.length,
         diasRestantes: diasRestantes >= 0 ? diasRestantes : 0,
         xpTotal
@@ -83,6 +86,7 @@ exports.listarQuizzesPorProfessor = async (req, res) => {
           _id: quiz._id,
           nome: quiz.nome,
           materia: quiz.materia,
+          anoLetivo: quiz.anoLetivo,
           dataFinal: quiz.dataFinal,
           criadoEm: quiz.criadoEm,
           quantidadePerguntas: quiz.perguntas.length,
@@ -112,6 +116,7 @@ exports.quizAlunoView = async (req, res) => {
       id: quiz._id,
       nome: quiz.nome,
       materia: quiz.materia,
+      anoLetivo: quiz.anoLetivo,
       professorId: quiz.professorId,
       criadoEm: quiz.criadoEm,
       dataFinal: quiz.dataFinal,
@@ -143,6 +148,7 @@ exports.quizProfessorView = async (req, res) => {
       id: quiz._id,
       nome: quiz.nome,
       materia: quiz.materia,
+      anoLetivo: quiz.anoLetivo,
       professorId: quiz.professorId,
       criadoEm: quiz.criadoEm,
       dataFinal: quiz.dataFinal,
@@ -240,6 +246,7 @@ exports.resumoResposta = async (req, res) => {
       alunoId,
       nome: quiz.nome,
       materia: quiz.materia,
+      anoLetivo: quiz.anoLetivo,
       respondidoEm: resposta.respondidoEm,
       quantidadeTotal: resposta.respostas.length,
       quantidadeCorretas: resposta.respostas.filter(r => r.correta).length,
@@ -262,6 +269,7 @@ exports.quizzesRespondidosPorAluno = async (req, res) => {
       quizId: resposta.quizId._id,
       nome: resposta.quizId.nome,
       materia: resposta.quizId.materia,
+      anoLetivo: resposta.quizId.anoLetivo,
       dataFinal: resposta.quizId.dataFinal,
       respondidoEm: resposta.respondidoEm,
       xpGanho: resposta.xpGanho
@@ -302,74 +310,8 @@ exports.estatisticaUltimoQuiz = async (req, res) => {
   }
 };
 
-exports.listarPerguntasPendentes = async (req, res) => {
-  const { quizId } = req.params;
 
-  try {
-    const quiz = await Quiz.findById(quizId);
 
-    if (!quiz) {
-      return res.status(404).json({ error: 'Quiz não encontrado' });
-    }
-
-    if (quiz.status !== 'em_preparacao') {
-      return res.status(400).json({ error: 'Quiz já finalizado ou indisponível para edição' });
-    }
-
-    const pendentes = quiz.perguntas.filter(p => p.status === 'aguardando_aprovacao');
-
-    res.json({
-      quizId: quiz._id,
-      pendentes: pendentes.map(p => ({
-        perguntaId: p.perguntaId,
-        enunciado: p.enunciado,
-        opcoes: p.opcoes
-      }))
-    });
-  } catch (error) {
-    console.error("Erro ao listar perguntas pendentes:", error);
-    res.status(500).json({ error: 'Erro ao buscar perguntas pendentes' });
-  }
-};
-
-// PATCH /:quizId/perguntas/avaliar
-exports.avaliarPergunta = async (req, res) => {
-  const { quizId } = req.params;
-  const { perguntaId, aprovada } = req.body;
-
-  if (typeof aprovada !== 'boolean') {
-    return res.status(400).json({ error: 'Campo "aprovada" deve ser booleano' });
-  }
-
-  try {
-    const quiz = await Quiz.findById(quizId);
-    if (!quiz) {
-      return res.status(404).json({ error: 'Quiz não encontrado' });
-    }
-
-    if (quiz.status !== 'em_preparacao') {
-      return res.status(400).json({ error: 'Este quiz já foi finalizado' });
-    }
-
-    const pergunta = quiz.perguntas.find(p => p.perguntaId === perguntaId);
-
-    if (!pergunta) {
-      return res.status(404).json({ error: 'Pergunta não encontrada neste quiz' });
-    }
-
-    if (pergunta.status !== 'aguardando_aprovacao') {
-      return res.status(400).json({ error: 'Pergunta já foi avaliada' });
-    }
-
-    pergunta.status = aprovada ? 'aprovada' : 'rejeitada';
-    await quiz.save();
-
-    res.json({ message: `Pergunta ${aprovada ? 'aprovada' : 'rejeitada'} com sucesso.` });
-  } catch (error) {
-    console.error("Erro ao avaliar pergunta:", error);
-    res.status(500).json({ error: 'Erro ao avaliar pergunta' });
-  }
-};
 
 
 

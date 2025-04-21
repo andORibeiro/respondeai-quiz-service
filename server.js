@@ -5,6 +5,7 @@ const connectDB = require('./src/config/db');
 const quizRoutes = require('./src/routes/quizRoutes');
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./src/config/swaggerConfig");
+const quizDraftRoutes = require("./src/routes/quizDraftRoutes");
 
 
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/quizzes', quizRoutes);
+app.use('/api/rascunhos', quizDraftRoutes);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
