@@ -302,3 +302,74 @@ exports.estatisticaUltimoQuiz = async (req, res) => {
   }
 };
 
+exports.listarPerguntasPendentes = async (req, res) => {
+  const { quizId } = req.params;
+
+  try {
+    const quiz = await Quiz.findById(quizId);
+
+    if (!quiz) {
+      return res.status(404).json({ error: 'Quiz não encontrado' });
+    }
+
+    if (quiz.status !== 'em_preparacao') {
+      return res.status(400).json({ error: 'Quiz já finalizado ou indisponível para edição' });
+    }
+
+    const pendentes = quiz.perguntas.filter(p => p.status === 'aguardando_aprovacao');
+
+    res.json({
+      quizId: quiz._id,
+      pendentes: pendentes.map(p => ({
+        perguntaId: p.perguntaId,
+        enunciado: p.enunciado,
+        opcoes: p.opcoes
+      }))
+    });
+  } catch (error) {
+    console.error("Erro ao listar perguntas pendentes:", error);
+    res.status(500).json({ error: 'Erro ao buscar perguntas pendentes' });
+  }
+};
+
+// PATCH /:quizId/perguntas/avaliar
+exports.avaliarPergunta = async (req, res) => {
+  const { quizId } = req.params;
+  const { perguntaId, aprovada } = req.body;
+
+  if (typeof aprovada !== 'boolean') {
+    return res.status(400).json({ error: 'Campo "aprovada" deve ser booleano' });
+  }
+
+  try {
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({ error: 'Quiz não encontrado' });
+    }
+
+    if (quiz.status !== 'em_preparacao') {
+      return res.status(400).json({ error: 'Este quiz já foi finalizado' });
+    }
+
+    const pergunta = quiz.perguntas.find(p => p.perguntaId === perguntaId);
+
+    if (!pergunta) {
+      return res.status(404).json({ error: 'Pergunta não encontrada neste quiz' });
+    }
+
+    if (pergunta.status !== 'aguardando_aprovacao') {
+      return res.status(400).json({ error: 'Pergunta já foi avaliada' });
+    }
+
+    pergunta.status = aprovada ? 'aprovada' : 'rejeitada';
+    await quiz.save();
+
+    res.json({ message: `Pergunta ${aprovada ? 'aprovada' : 'rejeitada'} com sucesso.` });
+  } catch (error) {
+    console.error("Erro ao avaliar pergunta:", error);
+    res.status(500).json({ error: 'Erro ao avaliar pergunta' });
+  }
+};
+
+
+
