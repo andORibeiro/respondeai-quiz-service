@@ -70,6 +70,7 @@ exports.finalizarRascunho = async (req, res) => {
       nome: `Quiz de ${draft.materia} - ${draft.turma}`,
       materia: draft.materia,
       tema: draft.tema,
+      turma: draft.turma,
       professorId: draft.professorId,
       anoLetivo: draft.anoLetivo,
       perguntas: perguntasFormatadas,

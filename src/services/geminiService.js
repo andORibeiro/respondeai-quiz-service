@@ -6,16 +6,17 @@ exports.generateQuestions = async (tema, materia, anoLetivo, quantidade) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `Gere ${quantidade} questões de múltipla escolha sobre a materia "${materia}" para o ano letivo "${anoLetivo}". 
-Cada questão deve incluir 4 opções e a resposta correta. Retorne o resultado no seguinte formato JSON puro (sem comentários ou texto adicional):
-
-[
-  {
-    "questao": "Texto da questão",
-    "opcoes": ["Opção A", "Opção B", "Opção C", "Opção D"],
-    "respostaCorreta": "Opção A"
-  }
-]`;
+    const prompt = `Gere ${quantidade} questões de múltipla escolha sobre o tema "${tema}", no contexto da matéria "${materia}", para o ano letivo "${anoLetivo}". 
+    Cada questão deve incluir 4 opções e a resposta correta. Retorne o resultado no seguinte formato JSON puro (sem comentários ou texto adicional):
+    
+    [
+      {
+        "questao": "Texto da questão",
+        "opcoes": ["Opção A", "Opção B", "Opção C", "Opção D"],
+        "respostaCorreta": "Opção A"
+      }
+    ]`;
+    
 
     const result = await model.generateContent(prompt);
     const response = await result.response;

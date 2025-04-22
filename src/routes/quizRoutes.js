@@ -28,4 +28,7 @@ router.get('/:quizId', quizController.quizAlunoView);
 // ✅ Registrar resposta do aluno com correção e cálculo de XP
 router.post('/responder', quizController.responderQuiz);
 
+// ✅ Listar quizzes por turma
+router.get('/turma/:turma', quizController.listarQuizzesPorTurma);
+
 module.exports = router;

@@ -5,6 +5,7 @@ const quizSchema = new mongoose.Schema({
   materia: String,
   tema: String,
   anoLetivo: String,
+  turma: String,
   professorId: String,
   perguntas: [
     {

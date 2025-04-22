@@ -286,6 +286,33 @@ exports.estatisticaUltimoQuiz = async (req, res) => {
   }
 };
 
+exports.listarQuizzesPorTurma = async (req, res) => {
+  const { turma } = req.params;
+
+  try {
+    const quizzes = await Quiz.find({ turma });
+
+    if (!quizzes || quizzes.length === 0) {
+      return res.status(404).json({ message: 'Nenhum quiz encontrado para esta turma' });
+    }
+
+    res.json(quizzes.map(quiz => ({
+      _id: quiz._id,
+      nome: quiz.nome,
+      materia: quiz.materia,
+      tema: quiz.tema,
+      anoLetivo: quiz.anoLetivo,
+      professorId: quiz.professorId,
+      dataFinal: quiz.dataFinal,
+      criadoEm: quiz.criadoEm,
+      quantidadePerguntas: quiz.perguntas.length
+    })));
+  } catch (error) {
+    console.error("Erro ao listar quizzes por turma:", error);
+    res.status(500).json({ error: "Erro ao buscar quizzes por turma" });
+  }
+};
+
 
 
 

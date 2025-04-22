@@ -324,3 +324,26 @@
  *       500:
  *         description: Erro ao finalizar rascunho
  */
+
+
+/**
+ * @swagger
+ * /api/quizzes/turma/{turma}:
+ *   get:
+ *     summary: Listar quizzes por turma
+ *     tags: [Quizzes]
+ *     parameters:
+ *       - in: path
+ *         name: turma
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "Identificador da turma (ex: 9A, 2B, etc.)"
+ *     responses:
+ *       200:
+ *         description: Lista de quizzes da turma
+ *       404:
+ *         description: Nenhum quiz encontrado
+ *       500:
+ *         description: Erro ao buscar quizzes por turma
+ */
